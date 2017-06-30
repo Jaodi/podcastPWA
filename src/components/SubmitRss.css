@@ -1,0 +1,16 @@
+.submitrss-form {
+    padding: 0;
+}
+
+.submitrss-input {
+    width: calc(100% - 14px);
+    margin-top: 5px; 
+    height: 48px;
+}
+
+.submitrss-button {
+    width: calc(100% - 10px);
+    margin-top: 5px; 
+    padding: 0;
+    height: 48px;
+}
