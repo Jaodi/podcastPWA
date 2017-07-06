@@ -1,13 +1,19 @@
 import React from 'react';
 import './SubmitRss.css';
 import PropTypes from 'prop-types';
+import { fetchApi } from '../utils/fetchApi';
 
 class SubmitRss extends React.Component {
-    submitClick (input) { return async e => {
+    submitClick  = async (e, value) => {
         e.preventDefault();
-        const res = await fetch('');
-        console.log(res);
-    }}
+        try {
+            const res = await fetchApi('checkRssLink', {link: value});
+            const text = await res.json();
+            console.log(text);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     render () {
         return ( 
@@ -27,14 +33,18 @@ const SubmitRssDumb = ({ submitClick }) =>
             type="text" 
             className="submitrss-input"
             ref={(input) => { this.input = input }}
+            defaultValue="https://feeds.feedwrench.com/JavaScriptJabber.rss"
         />
         <button 
             type="button"
             className="submitrss-button"
-            onClick={submitClick(this.input)}
+            onClick={(e) => submitClick(e, this.input.value)}
         >
             submit a podcast rss link
         </button>
+        <audio controls>
+            <source src="https://media.devchat.tv/js-jabber/JSJ_261_HTTP_2_with_Surma.mp3" type="audio/mpeg" />
+        </audio>    
     </form>
 
 
