@@ -5,8 +5,10 @@
   "dependencies": {
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
+    "redux": "^3.7.1",
     "rss-parser": "^2.10.0"
   },
   "devDependencies": {
@@ -24,7 +26,7 @@
     "cors": "^2.8.3",
     "css-loader": "0.28.1",
     "dotenv": "4.0.0",
-    "eslint": "3.19.0",
+    "eslint": "^3.19.0",
     "eslint-config-react-app": "^1.0.4",
     "eslint-loader": "1.7.1",
     "eslint-plugin-flowtype": "2.33.0",
@@ -36,6 +38,7 @@
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.28.0",
     "jest": "20.0.3",
+    "node-gcm": "^0.14.6",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
     "postcss-loader": "2.0.5",
@@ -55,7 +58,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "PUBLIC_URL=/api node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
@@ -92,5 +95,12 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:4000"
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:4000",
+      "pathRewrite": {
+        "^/api": ""
+      }
+    }
+  }
 }

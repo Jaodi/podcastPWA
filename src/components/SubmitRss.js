@@ -2,6 +2,7 @@ import React from 'react';
 import './SubmitRss.css';
 import PropTypes from 'prop-types';
 import { fetchApi } from '../utils/fetchApi';
+import { subscribe } from '../registerServiceWorker'; 
 
 class SubmitRss extends React.Component {
     submitClick  = async (e, value) => {
@@ -15,16 +16,21 @@ class SubmitRss extends React.Component {
         }
     }
 
+    subscriptionClick = async () => {
+        await subscribe();
+    } 
+
     render () {
         return ( 
             <SubmitRssDumb 
                 submitClick={this.submitClick}
+                subscriptionClick= {this.subscriptionClick}
             />
         );
     }
 }
 
-const SubmitRssDumb = ({ submitClick }) => 
+const SubmitRssDumb = ({ submitClick, subscriptionClick }) => 
     <form 
         id="submitRSS" 
         className="submitrss-form"
@@ -42,6 +48,12 @@ const SubmitRssDumb = ({ submitClick }) =>
         >
             submit a podcast rss link
         </button>
+        <button
+            type="button"
+            onClick={subscriptionClick}
+        >
+        Enable notifications
+        </button>
         <audio controls>
             <source src="https://media.devchat.tv/js-jabber/JSJ_261_HTTP_2_with_Surma.mp3" type="audio/mpeg" />
         </audio>    
@@ -49,7 +61,8 @@ const SubmitRssDumb = ({ submitClick }) =>
 
 
 SubmitRssDumb.propTypes = {
-    submitClick: PropTypes.func
+    submitClick: PropTypes.func,
+    subscriptionClick: PropTypes.func
 }
 
 export { SubmitRss }

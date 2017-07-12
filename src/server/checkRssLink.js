@@ -1,4 +1,3 @@
-const request = require('request-promise-native');
 const { rssParser } = require('./rssParser');
 
 const checkRssLink = async responseBody => {

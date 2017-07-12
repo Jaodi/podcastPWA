@@ -1,8 +1,10 @@
 const parser = require('rss-parser');
-const { pick, compose, map, prop, assocPath, assoc, applySpec } = require('ramda');
+const { pick, compose, map, prop, applySpec } = require('ramda');
 
+// audio file and its type
 const enclosureFields = ['url', 'type'];
 const pickEnclosure = pick(enclosureFields);
+// single episode properties
 const processEntry = applySpec({
   pubDate: prop('pubDate'),
   title: prop('title'),
@@ -10,9 +12,11 @@ const processEntry = applySpec({
   enclosure: compose(
     pickEnclosure,
     prop('enclosure')
-  )
+  ),
+  guid: prop('guid'),
 });
 const processEntries = map(processEntry);
+// high level properties of a podcast
 const processFeed = compose(
   applySpec({
     description: prop('description'), 
@@ -25,6 +29,7 @@ const processFeed = compose(
   }),
   prop('feed')
 );
+//looking for a picture on a podcast
 
 const rssParser = url => new Promise(resolve => {
   parser.parseURL(url, (err, parsed) => {
