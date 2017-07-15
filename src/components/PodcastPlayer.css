@@ -1,4 +1,7 @@
-.podcast-player {
-  z-index: 2;
-  background-color: grey;
+.player-audio {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  margin: auto;
+  width: 100%
 }

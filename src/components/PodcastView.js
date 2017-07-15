@@ -3,34 +3,36 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './PodcastView.css';
 import { selectItem } from '../actions/index';
+import { ItemBanner } from './layout/ItemBanner';
 
 // import { selectedEpisode, selectEpisode } from '../uiState';
 
 const PodcastView = ({icon, description, link, title, entries = [], selectedEpisode, selectItem}) => <div>
-  <div className='podcast-view'>
-    <span className='podcast-title'>{title}</span>
+  <ItemBanner
+    title={title}
+  >
     <img src={icon} className='podcast-icon' alt='podcast icon' />
     <div className='podcast-details'>
       <span className='podcast-desctiption'>{description}</span>
       <a href={link} className='podcast-link'>{link}</a>
     </div>
-  </div>
+  </ItemBanner>
   <ul className='episode-list'>{
-    entries.map((entry, index) => 
+    entries.map(entry => 
       <PodcastEntry
         pubDate={entry.pubDate}
         title={entry.title}
         link={entry.link}
-        key={index}
-        index={index}
-        isSelected={index===selectedEpisode}
-        onClick={() => selectItem(index)}
+        key={entry.guid}
+        guid={entry.guid}
+        isSelected={entry===selectedEpisode}
+        onClick={() => selectItem(entry.guid)}
       />
     )
   }</ul>
 </div>
 
-const PodcastEntry = ({pubDate, title, link, index, isSelected, onClick}) => <li>
+const PodcastEntry = ({pubDate, title, link, guid, isSelected, onClick}) => <li>
   <span 
     className={`podcast-entry${isSelected ? ' podcast-entry-selected' : ''}`}
     onClick={onClick}

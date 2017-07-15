@@ -2,19 +2,6 @@ hr {
   margin: 0px 10px;
 }
 
-.podcast-view {
-  height: 210px;
-  position: fixed;
-  top: 0px;
-  width: 100%;
-  overflow: hidden;
-  box-shadow: 0px 3px 3px #888888;
-  /*border-bottom: 3px solid black;
-  border-width: 3px;
-  border-style: solid;
-  border-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0)) 1 100%;*/
-}
-
 .episode-list {
   height: calc(100% - 213px);
   bottom: 0px;
@@ -44,15 +31,4 @@ hr {
 
 .podcast-entry-selected {
   background-color: lightsteelblue;
-}
-
-.podcast-title {
-  white-space: nowrap;
-  display: block;
-  text-align: center;
-  margin: 10px 10px 0px 10px;
-  font-size: 1.250em;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  overflow:hidden;
 }

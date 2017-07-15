@@ -1,4 +1,4 @@
-import { map, find, propEq } from 'ramda';
+import { map } from 'ramda';
 import { mapPath } from '../utils/ramdaExt';
 
 const parseDate = dateString => {
@@ -11,10 +11,8 @@ const parseDate = dateString => {
 const processEntry = mapPath(parseDate, ['pubDate'])
 const processEntries = map(processEntry)
 const processPodcast = mapPath(processEntries, ['entries'])
-const findEpisode = (guid, displayedEpisodes) => 
-  find(propEq('guid', guid), displayedEpisodes)
 
-const podcastApp = (state = {}, action) => {
+const activePodcast = (state = {}, action) => {
   switch (action.type) {
     case 'OPEN_PODCAST':
       const parsed = processPodcast(action.podcast);
@@ -23,15 +21,11 @@ const podcastApp = (state = {}, action) => {
         ...parsed,
         displayedEpisodes: parsed.entries,
       }
-    case 'SELECT_ITEM': 
-      return {
-        ...state,
-        selectedEpisode: findEpisode(action.guid, state.displayedEpisodes)
-      }
     default:
       return state
   }
 }
 
-
-export { podcastApp }
+export {
+  activePodcast
+}

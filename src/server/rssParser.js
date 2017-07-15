@@ -9,6 +9,7 @@ const processEntry = applySpec({
   pubDate: prop('pubDate'),
   title: prop('title'),
   link: prop('link'),
+  guid: prop('guid'),
   enclosure: compose(
     pickEnclosure,
     prop('enclosure')

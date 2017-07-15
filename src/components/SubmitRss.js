@@ -3,7 +3,17 @@ import './SubmitRss.css';
 import PropTypes from 'prop-types';
 import { fetchApi } from '../utils/fetchApi';
 import { subscribe } from '../registerServiceWorker'; 
+import { withRouter } from 'react-router-dom'
+import { openPodcast } from '../actions/index';
+import { connect } from 'react-redux';
 
+@withRouter
+@connect(
+    ()=>({}),
+    dispatch => ({
+        openPodcast: podcast => dispatch(openPodcast(podcast))
+    })
+)
 class SubmitRss extends React.Component {
     submitClick  = async (e, value) => {
         e.preventDefault();
@@ -11,6 +21,9 @@ class SubmitRss extends React.Component {
             const res = await fetchApi('checkRssLink', {link: value});
             const text = await res.json();
             console.log(text);
+            this.props.openPodcast(text);
+            this.props.history.push('/podcast')
+            // browserHistory.push('/podcast')
         } catch (e) {
             console.error(e);
         }
@@ -22,7 +35,7 @@ class SubmitRss extends React.Component {
 
     render () {
         return ( 
-            <SubmitRssDumb 
+            <SubmitRssLayout 
                 submitClick={this.submitClick}
                 subscriptionClick= {this.subscriptionClick}
             />
@@ -30,7 +43,11 @@ class SubmitRss extends React.Component {
     }
 }
 
-const SubmitRssDumb = ({ submitClick, subscriptionClick }) => 
+SubmitRss.contextTypes = {
+    router: PropTypes.object
+}
+
+const SubmitRssLayout = ({ submitClick, subscriptionClick }) => 
     <form 
         id="submitRSS" 
         className="submitrss-form"
@@ -60,7 +77,7 @@ const SubmitRssDumb = ({ submitClick, subscriptionClick }) =>
     </form>
 
 
-SubmitRssDumb.propTypes = {
+SubmitRssLayout.propTypes = {
     submitClick: PropTypes.func,
     subscriptionClick: PropTypes.func
 }

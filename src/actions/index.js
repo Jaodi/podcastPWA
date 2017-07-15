@@ -1,7 +1,7 @@
-export const selectItem = index => {
+export const selectItem = guid => {
   return {
     type: 'SELECT_ITEM',
-    index
+    guid
   }
 }
 
