@@ -3,17 +3,19 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk';
 import { podcastApp } from './reducers/podcastApp'
 
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
-import { PodcastPage } from './components/PodcastView'; 
+import { PodcastPage } from './components/podcastPage/PodcastPage'; 
 import { ConnectedPodcastPlayer } from './components/PodcastPlayer';
 
 const store = createStore(
   podcastApp,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(thunk)
 );
 // store.dispatch(openPodcast(parsedPodcast));
 
@@ -24,12 +26,8 @@ ReactDOM.render(
     >
       <div>
         <Switch>
-          <Route exact path='/'>   
-            <App />
-          </Route>
-          <Route path='/podcast'>   
-            <PodcastPage />
-          </Route>
+          <Route exact path='/' component={App} />
+          <Route path='/podcast/:id?' component={PodcastPage} /> 
         </Switch>        
         <ConnectedPodcastPlayer />   
       </div>

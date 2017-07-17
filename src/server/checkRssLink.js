@@ -2,10 +2,10 @@ const { rssParser } = require('./rssParser');
 
 const checkRssLink = async responseBody => {
   try {
-    // const rssString = await request(responseBody.link)
     const parsed = await rssParser(responseBody.link);
+    const podcast = Object.assign({link: responseBody.link}, parsed);
 
-    return parsed;
+    return podcast;
   } catch (e) { 
     return {error: `loading rss feed failed ${e.message}`}
   }

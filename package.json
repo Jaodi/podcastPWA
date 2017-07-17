@@ -9,6 +9,7 @@
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
+    "redux-thunk": "^2.2.0",
     "rss-parser": "^2.10.0"
   },
   "devDependencies": {
@@ -40,6 +41,8 @@
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.28.0",
     "jest": "20.0.3",
+    "mongodb": "^2.2.30",
+    "mongodb-promise": "0.0.4",
     "node-gcm": "^0.14.6",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
@@ -54,6 +57,7 @@
     "style-loader": "0.17.0",
     "sw-precache-webpack-plugin": "0.9.1",
     "url-loader": "0.5.8",
+    "uuid": "^3.1.0",
     "webpack": "2.6.1",
     "webpack-dev-server": "2.4.5",
     "webpack-manifest-plugin": "1.1.0",

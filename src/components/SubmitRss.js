@@ -4,16 +4,8 @@ import PropTypes from 'prop-types';
 import { fetchApi } from '../utils/fetchApi';
 import { subscribe } from '../registerServiceWorker'; 
 import { withRouter } from 'react-router-dom'
-import { openPodcast } from '../actions/index';
-import { connect } from 'react-redux';
 
 @withRouter
-@connect(
-    ()=>({}),
-    dispatch => ({
-        openPodcast: podcast => dispatch(openPodcast(podcast))
-    })
-)
 class SubmitRss extends React.Component {
     submitClick  = async (e, value) => {
         e.preventDefault();
@@ -21,8 +13,7 @@ class SubmitRss extends React.Component {
             const res = await fetchApi('checkRssLink', {link: value});
             const text = await res.json();
             console.log(text);
-            this.props.openPodcast(text);
-            this.props.history.push('/podcast')
+            this.props.history.push(`/podcast/${text.id}`)
             // browserHistory.push('/podcast')
         } catch (e) {
             console.error(e);

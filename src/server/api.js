@@ -3,13 +3,15 @@ const bodyParser = require('body-parser');
 const { subscriptions } = require('./subscriptionStorage');
 const { checkRssLink } = require('./checkRssLink');
 const { sendPush } = require('./sendPush');
+const { savePodcast, getPodcast } = require('./db/podcasts');
 
 apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) {
   console.log(req.body);
   try {
-    const parsedFeed = await checkRssLink(req.body);
+    const podcast = await checkRssLink(req.body);
 
-    res.json(parsedFeed);
+    const podcastId = await savePodcast(podcast);
+    res.json({id: podcastId});
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
@@ -22,6 +24,15 @@ apiApp.post('/subscription', bodyParser.json(), async function (req, res, next) 
       console.log(`registrationId is ${registrationId}`);
     }
     res.json(req.body);
+  } catch (e) { res.send(`parsing failed ${e.message}`) }
+});
+
+apiApp.get('/podcast', async function (req, res, next) {
+  try {
+    const podcastId = req.query.id;
+    const podcast = await getPodcast(podcastId);
+    console.log(`podcast ${podcast.title} retrived`);
+    res.json(podcast);
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
