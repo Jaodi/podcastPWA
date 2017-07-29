@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lodash": "^4.17.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
@@ -46,6 +47,7 @@
     "node-gcm": "^0.14.6",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
+    "postcss-input-range": "^4.0.0",
     "postcss-loader": "2.0.5",
     "promise": "7.1.1",
     "proxy-middleware": "^0.15.0",

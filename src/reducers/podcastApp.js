@@ -28,6 +28,11 @@ const podcastApp = (state = {}, action) => {
         ...state,
         selectedEpisode: findEpisode(action.guid, state.displayedEpisodes)
       }
+    case 'OPEN_PREVIEWS':
+      return {
+        ...state,
+        previews: action.previews
+      }
     default:
       return state
   }

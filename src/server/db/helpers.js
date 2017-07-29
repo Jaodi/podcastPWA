@@ -9,8 +9,17 @@ const getCollection = name => new Promise((resolve, reject) => {
   });
 })
 
-const execQuery = (collection, query) => new Promise((resolve, reject) => {
-  collection.find(query).toArray(function(err, items) {
+const execQuery = (collection, query, projection) => new Promise((resolve, reject) => {
+  collection.find(query, projection).toArray(function(err, items) {
+    if (err) {
+      reject(err);
+    }
+    resolve(items);
+  });  
+})
+
+const aggregate = (collection, query) => new Promise((resolve, reject) => {
+  collection.aggregate(query).toArray(function(err, items) {
     if (err) {
       reject(err);
     }
@@ -30,5 +39,6 @@ const insert = (collection, payload) => new Promise((resolve, reject)=> {
 module.exports = {
   getCollection,
   execQuery,
-  insert
+  insert,
+  aggregate
 }

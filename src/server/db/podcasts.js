@@ -1,5 +1,5 @@
-var { getCollection, execQuery, insert } = require('./helpers')
-var uuidv4 = require('uuid/v4');
+const { getCollection, execQuery, insert, aggregate } = require('./helpers')
+const uuidv4 = require('uuid/v4');
 
 const savePodcast = async podcast => {
   const collection = await getCollection('podcast');
@@ -18,10 +18,17 @@ const getPodcast = async id => {
 }
 
 const getPodcastPreviews = async () => {
-  
+  const collection = await getCollection('podcast');
+  const resultSet = await execQuery(collection,
+      {},
+      { entries: { $slice: -1 }}
+  );
+
+  return resultSet;
 }
 
 module.exports = {
   savePodcast,
-  getPodcast
+  getPodcast,
+  getPodcastPreviews
 }

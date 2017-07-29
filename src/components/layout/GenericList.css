@@ -1,0 +1,23 @@
+.podcast-details {
+  margin: 14px;
+}
+
+hr {
+  margin: 0px;
+}
+
+.generic-list {
+  height: calc(100% - 214px);
+  bottom: 0px;
+  position: fixed;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.generic-list__item {
+  display: block;
+}
+
+.generic-list__item_selected {
+  background-color: lightsteelblue;
+}

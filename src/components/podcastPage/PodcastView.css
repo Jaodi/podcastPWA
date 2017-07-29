@@ -1,15 +1,4 @@
-hr {
-  margin: 0px 10px;
-}
-
-.episode-list {
-  height: calc(100% - 213px);
-  bottom: 0px;
-  position: fixed;
-  overflow-y: scroll;
-}
-
-.podcast-icon {
+.podcast__icon {
   max-width: 158px;
   max-height: 158px;
   width: auto;
@@ -19,16 +8,46 @@ hr {
   bottom: 0px;
 }
 
-.podcast-details {
-  margin: 14px;
-}
-
 .podcast-entry {
-  padding: 5px 0px;
-  margin: 0px 10px;
-  display: block;
+  height: 68px;
+  display: flex;
+  align-items: center;
 }
 
-.podcast-entry-selected {
-  background-color: lightsteelblue;
+.podcast__details {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.podcast__subscribe {
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  text-align: center;
+}
+
+.podcast__subscribe__button {
+  width: 70%;
+  border: 0px;
+}
+
+.podcast__subscribe__howitworks {
+  display: block;
+  margin: 5px 0px;
+}
+
+.podcast-entry_selected {
+  background-color: lightgray;
+}
+
+.podcast-entry__date { 
+  font-weight: bold;
+  width: 56px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.podcast-entry__title {
+  overflow: hidden;
+  margin-right: 10px;
 }

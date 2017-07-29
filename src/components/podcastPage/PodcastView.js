@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './PodcastView.css';
 import { ItemBanner } from '../layout/ItemBanner';
+import { GenericList } from '../layout/GenericList';
+import { getSinceString } from '../../utils/dateFormater';
 
 const PodcastView = ({
   description, 
@@ -9,52 +11,63 @@ const PodcastView = ({
   icon, 
   link, 
   selectItem,
-  selectedEpisode, 
+  selectedIndex,
+  subscribe, 
   title
 }) => 
   <div>
     <ItemBanner
       title={title}
     >
-      <img src={icon} className='podcast-icon' alt='podcast icon' />
-      <div className='podcast-details'>
-        <span className='podcast-desctiption'>{description}</span>
-        <a href={link} className='podcast-link'>{link}</a>
+      {icon && <img src={icon} className='podcast__icon' alt='podcast icon' />}
+      <div className='podcast__details'>
+        <span className='podcast__description'>{description}</span>
+        <a href={link} className='podcast__link'>{link}</a>
+      </div>
+      <div className="podcast__subscribe">
+        <button
+          className='podcast__subscribe__button' 
+          onClick={() => subscribe()}
+        >
+          subscribe to podcast
+        </button>
+        <a
+          className='podcast__subscribe__howitworks' 
+          href='/how-it-works#subscription'
+        >how it works</a>
       </div>
     </ItemBanner>
-  <ul className='episode-list'>{
-    entries.map(entry => 
-      <PodcastEntry
-        pubDate={entry.pubDate}
-        title={entry.title}
-        link={entry.link}
-        key={entry.guid}
-        guid={entry.guid}
-        isSelected={entry===selectedEpisode}
-        onClick={() => selectItem(entry.guid)}
-      />
-    )
-  }</ul>
+    <GenericList 
+      items={entries.map((entry, index) => 
+        <PodcastEntry
+          pubDate={entry.pubDate}
+          title={entry.title}
+          isSelected={selectedIndex === index}
+          guid={entry.guid}
+          onClick={() => selectItem(entry.guid)}
+        />)
+      }
+    />
 </div>
 
-const PodcastEntry = ({pubDate, title, link, guid, isSelected, onClick}) => <li>
-  <span 
-    className={`podcast-entry${isSelected ? ' podcast-entry-selected' : ''}`}
+const PodcastEntry = ({pubDate, title, isSelected, guid, onClick}) => 
+  <div 
+    className={'podcast-entry' + (isSelected ? ' podcast-entry_selected' : '')}
     onClick={onClick}
   >
-    {`${pubDate ? pubDate.toDateString() : ''} ${title} ${link}`} 
-  </span>
-  <hr/>
-</li>
+    <span className='podcast-entry__date'>{pubDate && getSinceString(pubDate)}</span>
+    <span className='podcast-entry__title'>{title}</span>
+  </div>
 
 PodcastView.PropTypes = {
   description: PropTypes.string,
   entries: PropTypes.array,
-  icon: PropTypes.string,
+  // icon: PropTypes.string,
   link: PropTypes.string,
-  selectedEpisode: PropTypes.number,
+  selectedIndex: PropTypes.number,
   title: PropTypes.string,
   selectItem: PropTypes.func,
+  subscribe: PropTypes.func,
 }
 
 export { PodcastView };

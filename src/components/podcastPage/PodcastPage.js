@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectItem, loadPodcast } from '../../actions/index';
+import { selectItem, loadPodcast, addSubscription } from '../../actions/index';
 import { PodcastView } from './PodcastView';
 
 const PodcastPageView = ({
@@ -12,7 +12,8 @@ const PodcastPageView = ({
   loadPodcast,
   match,
   selectItem,
-  selectedEpisode,
+  selectedIndex,
+  subscribe,
   title
 }) => {
   if (match.params && match.params.id && match.params.id !== id) {
@@ -25,24 +26,33 @@ const PodcastPageView = ({
     entries={entries}
     icon={icon}
     link={link}
-    selectedEpisode={selectedEpisode}
+    selectedIndex={selectedIndex}
     title={title} 
-    selectItem={selectItem}   
+    selectItem={selectItem}
+    subscribe={() => subscribe(id)}   
   />
 }
 
-const PodcastPage = connect(state => ({
-  description: state.description,
-  entries: state.displayedEpisodes,
-  icon: state.icon,
-  link: state.link,
-  selectedEpisode: state.selectedEpisode,
-  title: state.title,
-  id: state.id,
-}), dispatch => ({
+const PodcastPage = connect(state => {
+  const selectedIndex = state.displayedEpisodes &&
+    state.displayedEpisodes.reduce((prev, el, index) =>
+      el===state.selectedEpisode ? index : prev
+    , undefined)
+  
+  return {
+    description: state.description,
+    entries: state.displayedEpisodes,
+    icon: state.icon,
+    link: state.link,
+    selectedIndex,
+    title: state.title,
+    id: state.id,
+  }
+}, dispatch => ({
   selectItem: index => dispatch(selectItem(index)),
-  loadPodcast: id => dispatch(loadPodcast(id))
-})
+  loadPodcast: id => dispatch(loadPodcast(id)),
+  subscribe: id => dispatch(addSubscription(id))
+  })
 )(PodcastPageView)
 
 export {

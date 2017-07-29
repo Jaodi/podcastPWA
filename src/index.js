@@ -10,6 +10,7 @@ import { podcastApp } from './reducers/podcastApp'
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import { PodcastPage } from './components/podcastPage/PodcastPage'; 
+import { PreviewsPage } from './components/previewsPage/PreviewsPage'; 
 import { ConnectedPodcastPlayer } from './components/PodcastPlayer';
 
 const store = createStore(
@@ -27,6 +28,7 @@ ReactDOM.render(
       <div>
         <Switch>
           <Route exact path='/' component={App} />
+          <Route exact path='/podcasts' component={PreviewsPage} />
           <Route path='/podcast/:id?' component={PodcastPage} /> 
         </Switch>        
         <ConnectedPodcastPlayer />   

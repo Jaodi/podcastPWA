@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const { subscriptions } = require('./subscriptionStorage');
 const { checkRssLink } = require('./checkRssLink');
 const { sendPush } = require('./sendPush');
-const { savePodcast, getPodcast } = require('./db/podcasts');
+const { savePodcast, getPodcast, getPodcastPreviews } = require('./db/podcasts');
+const uuidv4 = require('uuid/v4');
 
 apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) {
   console.log(req.body);
@@ -36,8 +37,22 @@ apiApp.get('/podcast', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
+apiApp.get('/podcastPreviews', async function (req, res, next) {
+  try {
+    const previews = await getPodcastPreviews();
+    console.log(`retrived ${previews.length} previews`);
+    res.json(previews);
+  } catch (e) { res.send(`parsing failed ${e.message}`) }
+});
+
+apiApp.get('/userID', (req, res) => {
+  res.json({id: uuidv4()});
+});
+
 apiApp.get('/sendPush', (req, res) => {
   sendPush(subscriptions);
-})
+});
+
+
 
 apiApp.listen(4000);
