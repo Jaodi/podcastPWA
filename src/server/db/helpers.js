@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 
 const getCollection = name => new Promise((resolve, reject) => {
-  MongoClient.connect("mongodb://localhost:27017/podcastPWA", function(err, db) {
+  MongoClient.connect("mongodb://mongo:27017/podcastPWA", function(err, db) {
     if(err) {
       reject(err);
     }
@@ -36,9 +36,29 @@ const insert = (collection, payload) => new Promise((resolve, reject)=> {
   });
 })
 
+const updateOrInsert = (collection, query, payload) => new Promise ((resolve, reject) => {
+  collection.update(query, payload, {upsert: true}, (err, result) => {
+    if (err) {
+      reject(err);
+    }
+    resolve();
+  })
+})
+
+const update = (collection, query, payload, options) => new Promise ((resolve, reject) => {
+  collection.update(query, payload, options, (err, result) => {
+    if (err) {
+      reject(err);
+    }
+    resolve();
+  })
+})
+
 module.exports = {
   getCollection,
   execQuery,
   insert,
-  aggregate
+  aggregate,
+  updateOrInsert,
+  update
 }

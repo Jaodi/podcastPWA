@@ -1,3 +1,5 @@
+import { subscribe as swSubscribe } from '../registerServiceWorker';
+
 export const selectItem = guid => {
   return {
     type: 'SELECT_ITEM',
@@ -26,17 +28,30 @@ export const setPushEndpoint = endpoint => {
   }
 }
 
-export const removeSubscription = id => {
+export const unsubscribe = id => {
   return {
-    type: 'REMOVE_SUBSCRIPTION',
+    type: 'UNSUBSCRIBE_FROM',
     id
   }
 }
 
-export const addSubscription = id => {
+export const subscribe = id => {
   return {
-    type: 'ADD_SUBSCRIPTION',
+    type: 'SUBSCRIBE_TO',
     id
+  }
+}
+
+export const getSubscriptions = () => {
+  return {
+    type: 'GET_SUBSCRIPTIONS'
+  }
+}
+
+export const setUserID = userID => {
+  return {
+    type: 'SET_USER_ID',
+    userID
   }
 }
 
@@ -49,3 +64,21 @@ export const loadPodcastPreviews = () => dispatch =>
   fetch('/api/podcastPreviews')
     .then(res => res.json())
     .then(previews => dispatch(openPreviews(previews)))
+
+export const subscribeTo = (userID, podcastID) => async dispatch => {
+  const notificationsEnabled = await swSubscribe();
+
+  if (notificationsEnabled) {
+    const subscription = await fetch(`/api/addSubscription?podcastID=${podcastID}&userID=${userID}`);
+    subscription && dispatch(subscribe(podcastID));
+  }
+}
+
+export const unsubscribeFrom = (userID, podcastID) => async dispatch => {
+  const notificationsEnabled = await swSubscribe();
+
+  if (notificationsEnabled) {
+    const subscription = await fetch(`/api/unsubscribeFrom?podcastID=${podcastID}&userID=${userID}`);
+    subscription && dispatch(unsubscribe(podcastID));
+  }
+}

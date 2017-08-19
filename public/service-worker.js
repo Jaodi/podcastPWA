@@ -83,12 +83,12 @@ const executeStrategy = (strategy, event, reqUrl) => {
   }
 }
 
-self.addEventListener('fetch', event => {
-  const reqUrl = event.request.url;
-  const strategy = typeStrategy[getResourceType(reqUrl)];
+// self.addEventListener('fetch', event => {
+//   const reqUrl = event.request.url;
+//   const strategy = typeStrategy[getResourceType(reqUrl)];
 
-  return executeStrategy(strategy, event, reqUrl);
-});
+//   return executeStrategy(strategy, event, reqUrl);
+// });
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -110,19 +110,21 @@ self.addEventListener('activate', () => {
 
 self.addEventListener('push', function(event) {  
   console.log('Received a push message', event);
-
-  var title = 'Yay a message.';  
-  var body = 'We have received a push message.';  
   var icon = 'favicon';  
   var tag = 'simple-push-demo-notification-tag';
 
-  event.waitUntil(  
-    self.registration.showNotification(title, {  
-      body: body,  
-      icon: icon,  
-      tag: tag  
-    })  
-  );  
+  event.waitUntil( 
+    dbPromise.
+    then(userID => fetch(`/api/getLastEpisode?userID=${userID}`).then(res => res.json()).then(episode => {
+      console.log(episode);
+      self.registration.showNotification(`${episode.podcastTitle}`, {  
+        body: `${episode.title}`,  
+        icon: icon,  
+        tag: tag  
+      });
+      // start loading episode.enclosure.url
+    })   
+  ));  
 });
 
 self.addEventListener('notificationclick', function(event) {  
@@ -149,3 +151,16 @@ self.addEventListener('notificationclick', function(event) {
     })
   );
 });
+
+const dbPromise = new Promise((resolve, reject) => {
+  const open = indexedDB.open('db', 1);
+  open.onupgradeneeded = e => {
+    open.result.createObjectStore('s');
+  };
+  open.onsuccess = e => {
+    const s = open.result.transaction('s').objectStore('s');
+    const rq = s.get('userID');
+    rq.onsuccess = (e => e.target.result ? resolve(e.target.result) : reject(new Error('no userID')));
+    // rq.onerror(reject);
+  };
+})

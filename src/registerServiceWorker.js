@@ -1,8 +1,8 @@
 import { fetchApi } from './utils/fetchApi';
 
 export default function register() {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-  // if ('serviceWorker' in navigator) {
+  // if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
 
@@ -43,17 +43,21 @@ export function unregister() {
   }
 }
 
-export async function subscribe() {  
+export async function subscribe() {
+  if (Notification.permission === 'granted') {
+    return true;
+  }
   try {
     const serviceWorkerRegistration = await navigator.serviceWorker.ready;
     const subscription = await serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true });
-    const serverResponse =  await fetchApi('/subscription', subscription);
+    // TODO fix direct access to local storage
+    const serverResponse =  await fetchApi('/saveEndpoint', {
+      endpoint: subscription.endpoint,
+      userID: localStorage.userID
+    });
     console.log(serverResponse);
+    return true;
   } catch (e) {  
-    if (Notification.permission === 'denied') {  
-      console.warn('Permission for Notifications was denied');  
-    } else {  
-      console.error('Unable to subscribe to push.', e);  
-    }  
+    return false;
   }  
 }

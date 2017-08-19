@@ -1,13 +1,24 @@
-const { getCollection, execQuery, insert, aggregate } = require('./helpers')
+const { getCollection, execQuery, insert, update } = require('./helpers')
 const uuidv4 = require('uuid/v4');
 
 const savePodcast = async podcast => {
   const collection = await getCollection('podcast');
-  const id = uuidv4();
+  const [ resultPodcast ] = await execQuery(collection, { rssLink: podcast.rssLink });
   
+  if (resultPodcast) {
+    console.log(`podcast with this feed is already preasent ${resultPodcast.id}`);
+    return resultPodcast.id;
+  }
+  
+  const id = uuidv4();
   await insert(collection, Object.assign({id}, podcast));
   console.log(`inserted podcast's id is ${id}`);
   return id;
+}
+
+const updatePodcast = async podcast => {
+  const collection = await getCollection('podcast');
+  await update(collection, {podcastID: podcast.podcastID}, {$set: podcast});
 }
 
 const getPodcast = async id => {
@@ -27,8 +38,27 @@ const getPodcastPreviews = async () => {
   return resultSet;
 }
 
+const getLastEpisode = async podcastID => {
+  try {
+    const collection = await getCollection('podcast');
+    const resultSet = await execQuery(collection,
+        { podcastID },
+        { 
+          entries: { $slice: 1 },
+          title: 1
+        }
+    );
+
+    return Object.assign(resultSet[0].entries[0], { podcastTitle: resultSet[0].title })
+  } catch(e) {
+    return `retrival failed ${e}`;
+  }
+}
+
 module.exports = {
   savePodcast,
+  updatePodcast,
   getPodcast,
-  getPodcastPreviews
+  getPodcastPreviews,
+  getLastEpisode
 }

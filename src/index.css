@@ -4,4 +4,14 @@ body {
   font-family: sans-serif;
   /*color: #A6E22E;*/
   /*background-color: #272822;*/
+} 
+
+button {
+  width: 70%;
+  border: 0px;
+  font-size: 1em;
+}
+
+input {
+  font-size: 1em;
 }

@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './Preview.css';
 
-const Preview = ({ description, entries, icon, link, selectedEpisode, title, id }) => <li> 
-    <Link to={`/podcast/${id}`} >
+const Preview = ({ description, entries, icon, link, selectedEpisode, title, id }) => <div className='preview'> 
+    <Link 
+      to={`/podcast/${id}`} 
+      className='preview-link'
+    >
       <span>{title}</span>
       <span>{description}</span>
     </Link>
-  </li>
+  </div>
 
   //  description={description}
   //   entries={entries}

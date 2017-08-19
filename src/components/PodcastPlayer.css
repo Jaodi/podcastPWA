@@ -1,8 +1,4 @@
 .audio-player {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  margin: auto;
   width: 100%;
   display: flex;
   align-items: center;
@@ -24,6 +20,13 @@
 
 .audio-player__lefttoplay {
   margin: 0px 5px;
+}
+
+.podcast-player {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .podcast-player__item {

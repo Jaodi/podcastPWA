@@ -4,6 +4,7 @@ import './PodcastView.css';
 import { ItemBanner } from '../layout/ItemBanner';
 import { GenericList } from '../layout/GenericList';
 import { getSinceString } from '../../utils/dateFormater';
+import { HowItWorksLink } from '../HowItWorksLink';
 
 const PodcastView = ({
   description, 
@@ -19,22 +20,21 @@ const PodcastView = ({
     <ItemBanner
       title={title}
     >
-      {icon && <img src={icon} className='podcast__icon' alt='podcast icon' />}
-      <div className='podcast__details'>
-        <span className='podcast__description'>{description}</span>
-        <a href={link} className='podcast__link'>{link}</a>
-      </div>
-      <div className="podcast__subscribe">
-        <button
-          className='podcast__subscribe__button' 
-          onClick={() => subscribe()}
-        >
-          subscribe to podcast
-        </button>
-        <a
-          className='podcast__subscribe__howitworks' 
-          href='/how-it-works#subscription'
-        >how it works</a>
+      <div className='podcast-view'>
+        {icon && <img src={icon} className='podcast-view__icon' alt='podcast icon' />}
+        <div className='podcast-view__details'>
+          <span className='podcast-view__description'>{description}</span>
+          <a href={link} className='podcast-view__link'>{link}</a>
+        </div>
+        <div className="podcast-view__subscribe">
+          <button
+            className='podcast-view__subscribe__button' 
+            onClick={() => subscribe()}
+          >
+            subscribe to podcast
+          </button>
+          <HowItWorksLink section='subscription' />
+        </div>
       </div>
     </ItemBanner>
     <GenericList 

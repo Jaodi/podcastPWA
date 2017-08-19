@@ -16,9 +16,11 @@ const PodcastPlayer = ({ selectedEpisode }) => {
     <ItemBanner
       title={title}
     >
-      <span className='podcast-player__item'>{`${pubDate && pubDate.toDateString()}`}</span>
-      {/* <a href={link} className='podcast-player__item'>{`${link.slice(0, 35)}...`}</a> */}
-      <AudioPlayer src={src} type={type} key={src}/>
+      <div className='podcast-player'> 
+        <span className='podcast-player__item'>{`${pubDate && pubDate.toDateString()}`}</span>
+        {/* <a href={link} className='podcast-player__item'>{`${link.slice(0, 35)}...`}</a> */}
+        <AudioPlayer src={src} type={type} key={src}/>
+      </div>
     </ItemBanner>
 }
 
@@ -47,6 +49,7 @@ class AudioPlayer extends React.PureComponent{
   }
 
   timeUpdateListener = () => {
+    if (this.audio.duration){
       const progress = this.audio.currentTime / this.audio.duration;
       const remaining = this.audio.duration - this.audio.currentTime;
 
@@ -54,6 +57,7 @@ class AudioPlayer extends React.PureComponent{
         progress, 
         remaining
       });
+    }
   }
 
   render = () => {

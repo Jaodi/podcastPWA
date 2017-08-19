@@ -3,10 +3,13 @@ const bodyParser = require('body-parser');
 const { subscriptions } = require('./subscriptionStorage');
 const { checkRssLink } = require('./checkRssLink');
 const { sendPush } = require('./sendPush');
-const { savePodcast, getPodcast, getPodcastPreviews } = require('./db/podcasts');
+const { checkAllUpdates } = require('./checkUpdates');
+// TODO split api methods into couple of files
+const { savePodcast, getPodcast, getPodcastPreviews, getLastEpisode } = require('./db/podcasts');
+const { createOrUpdate, addPodcastSubscription, getUsersToNotify, getLastUpdate } = require('./db/subscriptions');
 const uuidv4 = require('uuid/v4');
 
-apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) {
+apiApp.post('/api/checkRssLink', bodyParser.json(), async function (req, res, next) {
   console.log(req.body);
   try {
     const podcast = await checkRssLink(req.body);
@@ -16,19 +19,16 @@ apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) 
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.post('/subscription', bodyParser.json(), async function (req, res, next) {
+apiApp.post('/api/saveEndpoint', bodyParser.json(), async function (req, res, next) {
   try {
-    if (req.body.endpoint.startsWith('https://android.googleapis.com/gcm/send')){
-      const endpointParts = req.body.endpoint.split('/')
-      const registrationId = endpointParts[endpointParts.length - 1];
-      subscriptions.push(registrationId);
-      console.log(`registrationId is ${registrationId}`);
-    }
-    res.json(req.body);
+    const { userID, endpoint } = req.body;
+    createOrUpdate(userID, endpoint);
+    console.log(`new user with id "${userID}" subscribed`);
+    res.json('success');
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/podcast', async function (req, res, next) {
+apiApp.get('/api/podcast', async function (req, res, next) {
   try {
     const podcastId = req.query.id;
     const podcast = await getPodcast(podcastId);
@@ -37,7 +37,7 @@ apiApp.get('/podcast', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/podcastPreviews', async function (req, res, next) {
+apiApp.get('/api/podcastPreviews', async function (req, res, next) {
   try {
     const previews = await getPodcastPreviews();
     console.log(`retrived ${previews.length} previews`);
@@ -45,14 +45,47 @@ apiApp.get('/podcastPreviews', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/userID', (req, res) => {
+apiApp.get('/api/getLastEpisode', async function (req, res, next) {
+  try {
+    const { userID } = req.query;
+    const podcastID = await getLastUpdate(userID);
+    const lastEpisode = await getLastEpisode(podcastID);
+    res.json(lastEpisode);
+  } catch (e) { res.send(`parsing failed ${e.message}`) }
+});
+
+apiApp.get('/api/userID', (req, res) => {
   res.json({id: uuidv4()});
 });
 
-apiApp.get('/sendPush', (req, res) => {
-  sendPush(subscriptions);
+apiApp.get('/api/addSubscription', (req, res) => {
+  const { userID, podcastID } = req.query;
+
+  addPodcastSubscription(userID, podcastID)
+  res.json('success');
 });
 
+apiApp.get('/api/removeSubscription', (req, res) => {
+  res.json({id: uuidv4()});
+});
 
+// helpers
+// const scheduelePodcastCheck = timeout => 
+//   setTimeout(() => {
+
+//   }, timeout);
+
+apiApp.get('/api/notifyPodcastSubscribers', async (req, res) => {
+  try {
+    const { podcastID } = req.query;
+    const users = await getUsersToNotify(podcastID);
+    sendPush(users.map(el=>el.endpoint));
+    res.send('success');
+  } catch (e) {
+    res.send(`error occurred notifying clients ${e}`);
+  }
+});
+
+// checkAllUpdates(1000*15);
 
 apiApp.listen(4000);

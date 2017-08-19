@@ -1,21 +1,64 @@
-export const saveSubscription = () => {
+const { getCollection, insert, aggregate, update, updateOrInsert, execQuery } = require('./helpers');
+
+const createOrUpdate = async (userID, endpoint) => {
+  const collection = await getCollection('subscription');
+  
+  await insert(collection, {userID, endpoint});
+  console.log(`saved ${userID}'s endpoint`);
   // dedupe with existing subscriptions
   // save if there is no repetition
 }
 
-export const getUserSubsriptions = () => {
-  // by subscription endpoint or by a userid get all his subscriptions
-  // somewhere close to startup, so that ui would represent the state of them
+const addPodcastSubscription = async (userID, podcastID) => {
+  const collection = await getCollection('podcastSubscription'); 
+  await updateOrInsert(collection, {userID}, {userID, podcastID});
+  console.log(`saved ${userID}'s subscriptions to ${podcastID}`);
 }
 
-export const getSubscriptionsToNotify = (podcast) => {
-  // get all subscriptions to a podcast
+const getUsersToNotify = async podcastID => {
+  const podcastSubscriptions = await getCollection('podcastSubscription');
+  const userSubscriptions = await aggregate(podcastSubscriptions, [
+    {$match: {podcastID}},
+    {$lookup: {
+      from: 'subscription',
+      localField: 'userID',
+      foreignField: 'userID',
+      as: 'subscription'
+    }},
+    {$project: {
+        'subscription': '$subscription'
+    }}
+  ]);
+  return userSubscriptions.reduce((acc, el) => acc.concat(el.subscription) ,[]);
 }
 
-export const updateNotifiedSubscritions = (podcast) => {
-  // update last notification date for all subscriptions to updated podcast
+const updateNotifiedSubscritions = async (userIDs, podcastID) => {
+  const subscriptions = await getCollection('subscription');
+  await update(
+    subscriptions,
+    {
+      userID: {$in: userIDs}
+    },
+    {$set: {
+      lastUpdated: podcastID
+    }},
+    {
+      multi: true
+    }
+  );
 }
 
-export const getLastNotificationGuid = () => {
-  // get last updated podcast for a user to attempt a targeted redirect from the notification
+const getLastUpdate = async userID => {
+  const subscriptions = await getCollection('subscription');
+  const { lastUpdated } = await execQuery(subscriptions, {userID});
+
+  return lastUpdated;
+}
+
+module.exports = {
+  createOrUpdate,
+  addPodcastSubscription,
+  getUsersToNotify,
+  updateNotifiedSubscritions,
+  getLastUpdate
 }

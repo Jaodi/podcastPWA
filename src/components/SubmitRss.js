@@ -2,7 +2,6 @@ import React from 'react';
 import './SubmitRss.css';
 import PropTypes from 'prop-types';
 import { fetchApi } from '../utils/fetchApi';
-import { subscribe } from '../registerServiceWorker'; 
 import { withRouter } from 'react-router-dom'
 
 @withRouter
@@ -20,10 +19,6 @@ class SubmitRss extends React.Component {
         }
     }
 
-    subscriptionClick = async () => {
-        await subscribe();
-    } 
-
     render () {
         return ( 
             <SubmitRssLayout 
@@ -38,8 +33,8 @@ SubmitRss.contextTypes = {
     router: PropTypes.object
 }
 
-const SubmitRssLayout = ({ submitClick, subscriptionClick }) => 
-    <form 
+const SubmitRssLayout = ({ submitClick, subscriptionClick }) => <div className='submitrss'>
+    <form   
         id="submitRSS" 
         className="submitrss-form"
     >
@@ -56,16 +51,8 @@ const SubmitRssLayout = ({ submitClick, subscriptionClick }) =>
         >
             submit a podcast rss link
         </button>
-        <button
-            type="button"
-            onClick={subscriptionClick}
-        >
-        Enable notifications
-        </button>
-        <audio controls>
-            <source src="https://media.devchat.tv/js-jabber/JSJ_261_HTTP_2_with_Surma.mp3" type="audio/mpeg" />
-        </audio>    
     </form>
+</div>
 
 
 SubmitRssLayout.propTypes = {

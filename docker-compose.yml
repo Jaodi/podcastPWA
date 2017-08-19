@@ -1,0 +1,18 @@
+version: '2'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+  api: 
+    build: 
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    ports:
+      - "4000:4000"
+  static:
+    build: 
+      context: .
+      dockerfile: ./docker/static/Dockerfile
+    ports:
+      - "3000:3000"

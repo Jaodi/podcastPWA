@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { selectItem, loadPodcast, addSubscription } from '../../actions/index';
+import { selectItem, loadPodcast, subscribeTo, unsubscribeFrom } from '../../actions/index';
 import { PodcastView } from './PodcastView';
 
 const PodcastPageView = ({
@@ -14,7 +14,8 @@ const PodcastPageView = ({
   selectItem,
   selectedIndex,
   subscribe,
-  title
+  title,
+  userID
 }) => {
   if (match.params && match.params.id && match.params.id !== id) {
     loadPodcast(match.params.id);
@@ -29,7 +30,7 @@ const PodcastPageView = ({
     selectedIndex={selectedIndex}
     title={title} 
     selectItem={selectItem}
-    subscribe={() => subscribe(id)}   
+    subscribe={() => subscribe(userID ,id)}   
   />
 }
 
@@ -47,11 +48,13 @@ const PodcastPage = connect(state => {
     selectedIndex,
     title: state.title,
     id: state.id,
+    userID: state.userID
   }
 }, dispatch => ({
   selectItem: index => dispatch(selectItem(index)),
   loadPodcast: id => dispatch(loadPodcast(id)),
-  subscribe: id => dispatch(addSubscription(id))
+  subscribe: (userID, podcastID) => dispatch(subscribeTo(userID, podcastID)),
+  unsubscribe: (userID, podcastID) => dispatch(unsubscribeFrom(userID, podcastID))
   })
 )(PodcastPageView)
 
