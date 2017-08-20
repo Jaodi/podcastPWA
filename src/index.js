@@ -5,7 +5,6 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk';
 
-import App from './App';
 import { podcastApp } from './reducers/podcastApp'
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
@@ -29,10 +28,8 @@ const dbPromise = userID => new Promise((resolve, reject) => {
   };
   open.onsuccess = e => {
     const s = open.result.transaction('s', 'readwrite').objectStore('s');
-    const rq = s.put(userID, 'userID');
+    s.put(userID, 'userID');
     resolve();
-    // rq.onsuccess(resolve);
-    // rq.onerror(reject);
   };
 })
 
@@ -48,8 +45,7 @@ ReactDOM.render(
     >
       <div>
         <Switch>
-          <Route exact path='/' component={App} />
-          <Route exact path='/podcasts' component={PreviewsPage} />
+          <Route exact path='/' component={PreviewsPage} />
           <Route path='/podcast/:id?' component={PodcastPage} /> 
           <Route path='/howItWorks' component={HowItWorks} />
         </Switch>        

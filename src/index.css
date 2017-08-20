@@ -15,3 +15,8 @@ button {
 input {
   font-size: 1em;
 }
+
+ul {
+  margin: 0px;
+  padding: 0px;
+}

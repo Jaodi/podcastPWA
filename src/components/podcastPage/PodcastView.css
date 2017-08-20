@@ -9,7 +9,7 @@
 }
 
 .podcast-entry {
-  height: 68px;
+  min-height: 68px;
   display: flex;
   align-items: center;
 }
@@ -47,6 +47,5 @@
 }
 
 .podcast-entry__title {
-  overflow: hidden;
-  margin-right: 10px;
+  margin: 5px 10px 5px 0px;
 }

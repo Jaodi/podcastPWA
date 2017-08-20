@@ -1,5 +1,17 @@
+.how-it-works-page {
+  margin: 0em 1.5em;
+}
+
 .how-it-works-page_shifted {
   position: absolute;
   top: 214px;
 }
 
+.how-it-works-page__title {
+  font-size: 1.25em;
+}
+
+.how-it-works-page__site-feature {
+  display: block;
+  margin-top: 0.8em;
+}

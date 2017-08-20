@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-const title = 'How this site works';
+import './HowItWorks.css';
 
 const content = [
   {
@@ -15,19 +14,50 @@ const content = [
   }
 ]
 
-const underTheHood = [
+const subscriptions = [
   {
-    text: 'This web application extensively uses service-worker capabilities. It has two distinct caching strategies: agressivly cache app shell and media content, while always giving an attempt at loading the newest podcast feed before giving out cached value'
+    text: 'Subscribing to this website is extremely simple, you just have to give the permission to send you push notifications'
   },
   {
-    text: 'It is written in es6 using React and Redux. Uses mongo and ramda on the server to persist and process user data.'
+    text: 'PodcastPWA is completely functional without a single subscription. You dont have to do anything to get the benefit of fully cached app.'
   }
 ]
 
+const addingPodcasts = [
+  {
+    text: 'Adding a new podcast is rather simple. The only thing needed is a link to podcast`s rss-feed. Upon submiting a new link you will be redirected to a page with audio player.'
+  }
+]
+
+// const underTheHood = [
+//   {
+//     text: 'This web application extensively uses service-worker capabilities. It has two distinct caching strategies: agressivly cache app shell and media content, while always giving an attempt at loading the newest podcast feed before giving out cached value'
+//   },
+//   {
+//     text: 'It is written in es6 using React and Redux. Uses mongo and ramda on the server to persist and process user data.'
+//   }
+// ]
+
 const footerText = 'my contacts: ... ';
 
-export const HowItWorksPure = ({ playerOpened }) => <div className='how-it-works-page how-it-works-page_shifted'>
-  <h1>{title}</h1>
+const SiteFeature = ({text}) => <span className='how-it-works-page__site-feature'>
+  {text}
+</span>
+
+export const HowItWorksPure = ({ playerOpened }) => <div 
+  className={`how-it-works-page${playerOpened ? ' how-it-works-page_shifted' : ''}`}>
+  <h1 className='how-it-works-page__title'>How this site works</h1>
+  {content.map((el, ind) => 
+    <SiteFeature text={el.text} key={ind}/>
+  )}
+  <h1 className='how-it-works-page__title'>addingPodcasts</h1>
+  {addingPodcasts.map((el, ind) => 
+    <SiteFeature text={el.text} key={ind}/>
+  )}
+  <h1 className='how-it-works-page__title'>Subscriptions</h1>
+  {subscriptions.map((el, ind) => 
+    <SiteFeature text={el.text} key={ind}/>
+  )}
 </div> 
 
 export const HowItWorks = connect(state => ({
