@@ -24,6 +24,8 @@ const appShell = [
   {pattern: '/', type: EQUAL_TO},
   {pattern: '/podcasts', type: EQUAL_TO},
   {pattern: '/static/js/bundle.js', type: EQUAL_TO},
+  {pattern: '/static/js/main', type: STARTS_WITH},
+  {pattern: '/static/css/main', type: STARTS_WITH},
 ];
 
 const getResourceType = url => {
@@ -83,12 +85,12 @@ const executeStrategy = (strategy, event, reqUrl) => {
   }
 }
 
-// self.addEventListener('fetch', event => {
-//   const reqUrl = event.request.url;
-//   const strategy = typeStrategy[getResourceType(reqUrl)];
+self.addEventListener('fetch', event => {
+  const reqUrl = event.request.url;
+  const strategy = typeStrategy[getResourceType(reqUrl)];
 
-//   return executeStrategy(strategy, event, reqUrl);
-// });
+  return executeStrategy(strategy, event, reqUrl);
+});
 
 self.addEventListener('install', () => self.skipWaiting());
 

@@ -23,8 +23,10 @@ const PodcastView = ({
       <div className='podcast-view'>
         {icon && <img src={icon} className='podcast-view__icon' alt='podcast icon' />}
         <div className='podcast-view__details'>
-          <span className='podcast-view__description'>{description}</span>
-          <a href={link} className='podcast-view__link'>{link}</a>
+          <div className="podcast-view__details__inner">
+            <span className='podcast-view__description'>{description}</span>
+            <a href={link} className='podcast-view__link'>{link}</a>
+          </div>
         </div>
         <div className="podcast-view__subscribe">
           <button

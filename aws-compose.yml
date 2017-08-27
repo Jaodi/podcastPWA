@@ -5,14 +5,10 @@ services:
     ports:
       - "27017:27017"
   api: 
-    build: 
-      context: .
-      dockerfile: ./docker/api/Dockerfile
+    image: 661813109322.dkr.ecr.eu-central-1.amazonaws.com/jaodi/podcastpwa:api
     ports:
       - "4000:4000"
   static:
-    build: 
-      context: .
-      dockerfile: ./docker/static/Dockerfile
+    image: 661813109322.dkr.ecr.eu-central-1.amazonaws.com/jaodi/podcastpwa:static
     ports:
       - "80:3000"

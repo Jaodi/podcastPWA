@@ -21,6 +21,9 @@ const PreviewsPageView = ({
       title='Podcast catalogue'
     >
       <div>
+        <span>
+          This form allows you to add your favorite podcast to the list below. Just submit a link to it's rss feed.
+        </span>
         <SubmitRss/>
         <HowItWorksLink section='addingPodcasts' />
       </div>
