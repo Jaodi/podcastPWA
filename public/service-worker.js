@@ -74,7 +74,7 @@ const executeStrategy = (strategy, event, reqUrl) => {
     case CACHE_FIRST:
       return event.respondWith(matchAndCache(event, reqUrl));
     case FETCH_FIRST:
-      return event.respondWith(timedFetch(3, reqUrl).then(resp => 
+      return event.respondWith(timedFetch(500, reqUrl).then(resp => 
         resp.error ? matchAndCache(event, reqUrl) :
         caches.open('1').then(cache => {
           cache.put(reqUrl, resp.clone());

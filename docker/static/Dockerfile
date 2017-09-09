@@ -4,6 +4,6 @@ WORKDIR /app
 COPY package.json /app
 RUN npm install
 COPY . /app
-EXPOSE 3000
+EXPOSE 443
 # CMD ["node", "./node_modules/http-server/bin/http-server", "build", "-p", "3000"]
-CMD ["npm", 'run', 'prod']
+CMD ["npm", "run", "prod"]

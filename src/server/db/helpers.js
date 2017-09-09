@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 
 const getCollection = name => new Promise((resolve, reject) => {
-  MongoClient.connect("mongodb://localhost:27017/podcastPWA", function(err, db) {
+  MongoClient.connect("mongodb://mongo:27017/podcastPWA", function(err, db) {
     if(err) {
       reject(err);
     }
