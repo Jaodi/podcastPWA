@@ -1,19 +1,31 @@
-const podcastApp = require('express')();
+const https = require('https');
+const fs = require('fs');
+const express = require('express');
 
+const buildDir = 'C:\\Users\\niair\\projects\\podcast-pwa\\public';
 const urls = [
   '/',
   '/podcast',
   '/howItWorks',
 ];
 
-apiApp.get('/static', async function (req, res, next) {
-  console.log(req.body);
-  try {
-    const podcast = await checkRssLink(req.body);
+const rootRouter = express.Router();
 
-    const podcastId = await savePodcast(podcast);
-    res.json({id: podcastId});
-  } catch (e) { res.send(`parsing failed ${e.message}`) }
-});
+rootRouter.use('/', express.static(buildDir));
 
-apiApp.listen(3000);
+rootRouter.use('/podcast', (req, res) => {
+  res.sendFile(`${buildDir}\\index.html`);
+})
+
+rootRouter.use('/howItWorks', (req, res) => {
+  res.sendFile(`${buildDir}\\index.html`);
+})
+
+rootRouter.use('/api', )
+
+const options = {
+  key: fs.readFileSync('./podcastpwa.com.key'),
+  cert: fs.readFileSync('./podcastpwa_com.crt')
+};
+
+https.createServer(options, rootRouter).listen(8000);
