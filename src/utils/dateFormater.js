@@ -1,3 +1,7 @@
+const day = 1000 * 60 * 60 * 24;
+const month = day * 30;
+const year = day * 365;
+
 const dateFormater1 = date => {
   if (date instanceof Date) {
     return `${date.getDate()}/${date.getMonth()}/${date.getFullYear() % 100}`
@@ -7,16 +11,15 @@ const dateFormater1 = date => {
 
 const getSinceString = date => {
   const now = new Date();
-  if (date instanceof Date) {
-    if (now.getFullYear()!==date.getFullYear()) {
-      return `${now.getFullYear()-date.getFullYear()}y`
-    }
-    if (now.getMonth()!==date.getMonth()) {
-      return `${now.getMonth()-date.getMonth()}m`
-    }
-    return `${now.getDate()-date.getDate()}d`
-  } 
-  return '';
+  const period = now - date;
+
+  if (period > year) {
+    return `${Math.floor(period/year)}y`    
+  }
+  if (period > month) {
+    return `${Math.floor(period/month)}m`    
+  }
+  return `${Math.floor(period/day)}d`    
 }
 
 const getStringPart = (amount, base) => `0${base && amount % base || amount}`.slice(-2)
