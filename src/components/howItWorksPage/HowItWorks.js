@@ -10,13 +10,13 @@ const content = [
     text: 'Moreover, it loads new episodes of the podcasts you subscribe to, whenever they come out.'
   },
   {
-    text: 'It can be saved to homescreen and used without browser navigation to mimmick the look and feel of a native app'
+    text: 'It can be saved to homescreen and used without browser navigation to mimmick the look and feel of a native app.'
   }
 ]
 
 const subscriptions = [
   {
-    text: 'Subscribing to this website is extremely simple, you just have to give the permission to send you push notifications'
+    text: 'Subscribing to a podcast is extremely simple. No registration needed. You just need to give the permission for this site to send notifications once.'
   },
   {
     text: 'PodcastPWA is completely functional without a single subscription. You dont have to do anything to get the benefit of fully cached app.'
@@ -50,7 +50,7 @@ export const HowItWorksPure = ({ playerOpened }) => <div
   {content.map((el, ind) => 
     <SiteFeature text={el.text} key={ind}/>
   )}
-  <h1 className='how-it-works-page__title'>addingPodcasts</h1>
+  <h1 className='how-it-works-page__title'>Adding podcasts</h1>
   {addingPodcasts.map((el, ind) => 
     <SiteFeature text={el.text} key={ind}/>
   )}

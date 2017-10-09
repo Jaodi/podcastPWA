@@ -1,31 +1,44 @@
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const express = require('express');
+const redirectHttps = require('express-redirect-https');
 
-const buildDir = 'C:\\Users\\niair\\projects\\podcast-pwa\\public';
+const {apiApp} = require('./api');
+
+const cwd = process.cwd();
+const buildDir = `${cwd}/build`;
 const urls = [
   '/',
   '/podcast',
   '/howItWorks',
 ];
+const app = express();
 
-const rootRouter = express.Router();
+app.use(redirectHttps());
 
-rootRouter.use('/', express.static(buildDir));
+app.use(express.static(buildDir));
 
-rootRouter.use('/podcast', (req, res) => {
-  res.sendFile(`${buildDir}\\index.html`);
+app.all('/podcast/*', (req, res) => {
+  res.sendFile(`${buildDir}/index.html`);
 })
 
-rootRouter.use('/howItWorks', (req, res) => {
-  res.sendFile(`${buildDir}\\index.html`);
+app.all('/howItWorks', (req, res) => {
+  res.sendFile(`${buildDir}/index.html`);
 })
 
-rootRouter.use('/api', )
+app.use('/api', apiApp)
 
-const options = {
-  key: fs.readFileSync('./podcastpwa.com.key'),
-  cert: fs.readFileSync('./podcastpwa_com.crt')
-};
 
-https.createServer(options, rootRouter).listen(8000);
+const testing = process.argv[2];
+if (testing && testing==='true') {
+  http.createServer(app).listen(4000);
+} else {
+  const options = {
+    key: fs.readFileSync(`${cwd}/podcastpwa.com.key`),
+    cert: fs.readFileSync(`${cwd}/podcastpwa_com.crt`)
+  };
+  http.createServer(app).listen(80);
+  https.createServer(options, app).listen(443);
+}
+ 

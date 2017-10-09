@@ -1,4 +1,4 @@
-const apiApp = require('express')();
+const apiApp = require('express').Router();
 const bodyParser = require('body-parser');
 const { subscriptions } = require('./subscriptionStorage');
 const { checkRssLink } = require('./checkRssLink');
@@ -9,7 +9,7 @@ const { savePodcast, getPodcast, getPodcastPreviews, getLastEpisode } = require(
 const { createOrUpdate, addPodcastSubscription, getUsersToNotify, getLastUpdate } = require('./db/subscriptions');
 const uuidv4 = require('uuid/v4');
 
-apiApp.post('/api/checkRssLink', bodyParser.json(), async function (req, res, next) {
+apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) {
   console.log(req.body);
   try {
     const podcast = await checkRssLink(req.body);
@@ -19,7 +19,7 @@ apiApp.post('/api/checkRssLink', bodyParser.json(), async function (req, res, ne
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.post('/api/saveEndpoint', bodyParser.json(), async function (req, res, next) {
+apiApp.post('/saveEndpoint', bodyParser.json(), async function (req, res, next) {
   try {
     const { userID, endpoint } = req.body;
     createOrUpdate(userID, endpoint);
@@ -28,7 +28,7 @@ apiApp.post('/api/saveEndpoint', bodyParser.json(), async function (req, res, ne
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/api/podcast', async function (req, res, next) {
+apiApp.get('/podcast', async function (req, res, next) {
   try {
     const podcastId = req.query.id;
     const podcast = await getPodcast(podcastId);
@@ -37,7 +37,7 @@ apiApp.get('/api/podcast', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/api/podcastPreviews', async function (req, res, next) {
+apiApp.get('/podcastPreviews', async function (req, res, next) {
   try {
     const previews = await getPodcastPreviews();
     console.log(`retrived ${previews.length} previews`);
@@ -45,7 +45,7 @@ apiApp.get('/api/podcastPreviews', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/api/getLastEpisode', async function (req, res, next) {
+apiApp.get('/getLastEpisode', async function (req, res, next) {
   try {
     const { userID } = req.query;
     const podcastID = await getLastUpdate(userID);
@@ -54,18 +54,18 @@ apiApp.get('/api/getLastEpisode', async function (req, res, next) {
   } catch (e) { res.send(`parsing failed ${e.message}`) }
 });
 
-apiApp.get('/api/userID', (req, res) => {
+apiApp.get('/userID', (req, res) => {
   res.json({id: uuidv4()});
 });
 
-apiApp.get('/api/addSubscription', (req, res) => {
+apiApp.get('/addSubscription', (req, res) => {
   const { userID, podcastID } = req.query;
 
   addPodcastSubscription(userID, podcastID)
   res.json('success');
 });
 
-apiApp.get('/api/removeSubscription', (req, res) => {
+apiApp.get('/removeSubscription', (req, res) => {
   res.json({id: uuidv4()});
 });
 
@@ -75,7 +75,7 @@ apiApp.get('/api/removeSubscription', (req, res) => {
 
 //   }, timeout);
 
-apiApp.get('/api/notifyPodcastSubscribers', async (req, res) => {
+apiApp.get('/notifyPodcastSubscribers', async (req, res) => {
   try {
     const { podcastID } = req.query;
     const users = await getUsersToNotify(podcastID);
@@ -88,4 +88,8 @@ apiApp.get('/api/notifyPodcastSubscribers', async (req, res) => {
 
 // checkAllUpdates(1000*15);
 
-apiApp.listen(4000);
+module.exports = {
+  apiApp
+}
+
+// apiApp.listen(4000);

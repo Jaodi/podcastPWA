@@ -7,11 +7,12 @@ hr {
 }
 
 .generic-list {
-  height: calc(100% - 214px);
+  height: calc(100% - 210px);
   bottom: 0px;
-  position: fixed;
+  position: absolute;
   overflow-y: scroll;
-  width: 100%;
+  max-width: 420px;
+  box-shadow: 0px 3px 3px #888;  
 }
 
 .generic-list__item {
@@ -19,5 +20,5 @@ hr {
 }
 
 .generic-list__item_selected {
-  background-color: lightsteelblue;
+  background-color: #B0C4DE;
 }

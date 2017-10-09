@@ -4,15 +4,16 @@ services:
     image: mongo
     ports:
       - "27017:27017"
-  api: 
-    build: 
-      context: .
-      dockerfile: ./docker/api/Dockerfile
-    ports:
-      - "4000:4000"
+  # api: 
+  #   build: 
+  #     context: .
+  #     dockerfile: ./docker/api/Dockerfile
+  #   ports:
+  #     - "4000:4000"
   static:
     build: 
       context: .
       dockerfile: ./docker/static/Dockerfile
     ports:
       - "443:443"
+      - "80:80"
