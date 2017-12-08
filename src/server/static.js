@@ -15,7 +15,12 @@ const urls = [
 ];
 const app = express();
 
-app.use(redirectHttps());
+const testing = process.argv[2] === 'true';
+console.log(`tesing is equal to ${testing}`);
+
+if (!testing) {
+  app.use(redirectHttps());
+}
 
 app.use(express.static(buildDir));
 
@@ -29,13 +34,11 @@ app.all('/howItWorks', (req, res) => {
 
 app.use('/api', apiApp)
 
-
-const testing = process.argv[2];
-if (testing && testing==='true') {
+if (testing) {
   http.createServer(app).listen(4000);
 } else {
   const options = {
-    key: fs.readFileSync(`${cwd}/podcastpwa.com.key`),
+    key: fs.readFileSync(`${cwd}/podcastpwa_com.key`),
     cert: fs.readFileSync(`${cwd}/podcastpwa_com.crt`)
   };
   http.createServer(app).listen(80);

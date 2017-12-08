@@ -1,5 +1,8 @@
+const cacheVersion = '2';
+
 // fetching stratagies
 const CACHE_FIRST = 'CACHE_FIRST';
+const CACHE_FIRST_VERSIONED = 'CACHE_FIRST_VERSIONED';
 const FETCH_FIRST = 'FETCH_FIRST';
 
 // types of requests performed
@@ -10,7 +13,7 @@ const MEDIA_REQUEST = 'MEDIA_REQUEST';
 // type to strategy map
 const typeStrategy = {
   API_REQUEST: FETCH_FIRST,
-  APP_SHELL: CACHE_FIRST,
+  APP_SHELL: CACHE_FIRST_VERSIONED,
   MEDIA_REQUEST: CACHE_FIRST
 }
 
@@ -53,28 +56,28 @@ const getResourceType = url => {
   return MEDIA_REQUEST;
 }
 
-const timedFetch = (timeout, url) => new Promise(resolve => {
-  fetch(url).then(resolve);
+const timedFetch = (timeout, request) => new Promise(resolve => {
+  fetch(request).then(resolve);
   setTimeout(() => resolve({error: `timeout of ${timeout} exceeded`}), timeout);
 })
 
-const matchAndCache = (event, reqUrl) => 
-  caches.match(event.request).then(cachedResp => 
-    cachedResp || fetch(event.request).then(resp => 
-      caches.open('1').then(cache => {
-        cache.put(event.request, resp.clone());
-        return resp;
-      })
-    )
-  )
+const matchAndCache = (event, reqUrl, version = '1') => 
+caches.open(version).then(cache => cache.match(event.request).then(cachedResp => 
+  cachedResp || fetch(event.request).then(resp => {
+    cache.put(event.request, resp.clone());
+    return resp;
+  })
+))
 
-
-const executeStrategy = (strategy, event, reqUrl) => {
+const executeStrategy = (strategy, event, request) => {
+  const reqUrl = request.url;
   switch (strategy){
     case CACHE_FIRST:
       return event.respondWith(matchAndCache(event, reqUrl));
+      case CACHE_FIRST_VERSIONED:
+        return event.respondWith(matchAndCache(event, reqUrl, cacheVersion));
     case FETCH_FIRST:
-      return event.respondWith(timedFetch(500, reqUrl).then(resp => 
+      return event.respondWith(timedFetch(500, request).then(resp => 
         resp.error ? matchAndCache(event, reqUrl) :
         caches.open('1').then(cache => {
           cache.put(reqUrl, resp.clone());
@@ -89,7 +92,7 @@ self.addEventListener('fetch', event => {
   const reqUrl = event.request.url;
   const strategy = typeStrategy[getResourceType(reqUrl)];
 
-  return executeStrategy(strategy, event, reqUrl);
+  return executeStrategy(strategy, event, event.request);
 });
 
 self.addEventListener('install', () => self.skipWaiting());

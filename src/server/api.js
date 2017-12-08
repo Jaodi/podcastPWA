@@ -1,6 +1,5 @@
 const apiApp = require('express').Router();
 const bodyParser = require('body-parser');
-const { subscriptions } = require('./subscriptionStorage');
 const { checkRssLink } = require('./checkRssLink');
 const { sendPush } = require('./sendPush');
 const { checkAllUpdates } = require('./checkUpdates');
@@ -21,8 +20,8 @@ apiApp.post('/checkRssLink', bodyParser.json(), async function (req, res, next) 
 
 apiApp.post('/saveEndpoint', bodyParser.json(), async function (req, res, next) {
   try {
-    const { userID, endpoint } = req.body;
-    createOrUpdate(userID, endpoint);
+    const { userID, subscription } = req.body;
+    createOrUpdate(userID, subscription);
     console.log(`new user with id "${userID}" subscribed`);
     res.json('success');
   } catch (e) { res.send(`parsing failed ${e.message}`) }
@@ -69,27 +68,19 @@ apiApp.get('/removeSubscription', (req, res) => {
   res.json({id: uuidv4()});
 });
 
-// helpers
-// const scheduelePodcastCheck = timeout => 
-//   setTimeout(() => {
-
-//   }, timeout);
-
 apiApp.get('/notifyPodcastSubscribers', async (req, res) => {
   try {
     const { podcastID } = req.query;
     const users = await getUsersToNotify(podcastID);
-    sendPush(users.map(el=>el.endpoint));
+    sendPush(users.map(el=>el.subscription));
     res.send('success');
   } catch (e) {
     res.send(`error occurred notifying clients ${e}`);
   }
 });
 
-// checkAllUpdates(1000*15);
+checkAllUpdates(1000*60*5);
 
 module.exports = {
   apiApp
 }
-
-// apiApp.listen(4000);

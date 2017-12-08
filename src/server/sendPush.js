@@ -1,41 +1,15 @@
-const gcm = require('node-gcm');
+const webpush = require('web-push');
 const { logError } = require('./logError');
-const key = process.env.GCM_KEY;
 
-const gcmEndpointPrefix = 'https://android.googleapis.com/gcm/send';  
+webpush.setVapidDetails('mailto:niairobi@gmail.com',
+ 'BEpKdtyAw9rTVeV4L74aWbDGPCrzCqDexT4OKYG4wtPbThBTTNypV4wlGBlHcvtqDS1thfqXSs7CXS5q-y5CXaI',
+ '08wUaWbACuKu7N6pJMx0mZ3DQcadERAd5bnFfLedKdg' )
 
-const getRegistrationID = endpoint => {
-  if (endpoint.startsWith(gcmEndpointPrefix)){
-    const endpointParts = endpoint.split('/')
-    const registrationId = endpointParts[endpointParts.length - 1];
-    return registrationId;
-  }
-  return false;
-}
-
-const gcmPromise = registartionIDs => new Promise((resolve, reject) => {
-    const sender = new gcm.Sender(key);
-    const message = new gcm.Message({
-        vasya: 123
-    });   
-    sender.send(message, { registrationTokens: registartionIDs }, function (err, response) {
-	    if (err) reject(err);
-	    else resolve(response);
-    });
-
-})
-
-const sendPush = async endpoints => {
-  const registartionIDs = endpoints.reduce((acc, el) => {
-    const registartionID = getRegistrationID(el);
-    if (registartionID) return acc.concat([registartionID]);
-    return acc;
-  }, [])
-  try{
-    await gcmPromise(registartionIDs);
-  } catch (e) {
-    logError(e);
-  }
-}
+const sendPush = async subscriptions => 
+  Promise.all(subscriptions.map(
+    subscription => webpush.sendNotification(subscription, '123').catch(logError)
+  ))
+    .then(console.log)
+    .catch(logError)
 
 module.exports = { sendPush };

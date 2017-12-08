@@ -50,7 +50,7 @@ const PodcastView = ({
         />)
       }
     />
-</div>
+  </div>
 
 const PodcastEntry = ({pubDate, title, isSelected, guid, onClick}) => 
   <div 

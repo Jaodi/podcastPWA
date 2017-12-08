@@ -1,32 +1,17 @@
 import { fetchApi } from './utils/fetchApi';
 
+let swRegistration;
+
 export default function register() {
   // if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
-
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
-      const registration = await navigator.serviceWorker.register(swUrl)
-      registration.onupdatefound = () => {
-          const installingWorker = registration.installing;
-          installingWorker.onstatechange = () => {
-            if (installingWorker.state === 'installed') {
-              if (navigator.serviceWorker.controller) {
-                // At this point, the old content will have been purged and
-                // the fresh content will have been added to the cache.
-                // It's the perfect time to display a "New content is
-                // available; please refresh." message in your web app.
-                console.log('New content is available; please refresh.');
-              } else {
-                // At this point, everything has been precached.
-                // It's the perfect time to display a
-                // "Content is cached for offline use." message.
-                console.log('Content is cached for offline use.');
-              }
-            }
-          };
-        };
+        const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+        swRegistration = await navigator.serviceWorker.register(swUrl)
+        // if push notifications are enabled update subscription endpoint on the server
+        const subscription = await swRegistration.pushManager.getSubscription();
+        await updateServerSubscription(subscription);
       }
       catch (error) {
         console.error('Error during service worker registration:', error);
@@ -37,27 +22,45 @@ export default function register() {
 
 export function unregister() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.unregister();
-    });
+    swRegistration.unregister();
   }
 }
 
 export async function subscribe() {
-  if (Notification.permission === 'granted') {
-    return true;
-  }
   try {
-    const serviceWorkerRegistration = await navigator.serviceWorker.ready;
-    const subscription = await serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true });
-    // TODO fix direct access to local storage
-    const serverResponse =  await fetchApi('/saveEndpoint', {
-      endpoint: subscription.endpoint,
-      userID: localStorage.userID
+    const subscription = await swRegistration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array('BEpKdtyAw9rTVeV4L74aWbDGPCrzCqDexT4OKYG4wtPbThBTTNypV4wlGBlHcvtqDS1thfqXSs7CXS5q-y5CXaI'),      
     });
-    console.log(serverResponse);
+    // TODO fix direct access to local storage
+    await updateServerSubscription(subscription);
     return true;
   } catch (e) {  
+    console.log(e);
     return false;
   }  
+}
+
+const updateServerSubscription = async (subscription) => {
+  if (subscription) {
+    await fetchApi('saveEndpoint', {
+      subscription,
+      userID: localStorage.userID
+    })
+  }
+};
+
+const urlBase64ToUint8Array = base64String => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+ 
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+ 
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }

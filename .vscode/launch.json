@@ -9,10 +9,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceRoot}\\src\\server\\api.js",
-      "env": {
-        "GCM_KEY": "AAAAJ19pHSE:APA91bH1w9T6dcL3kEou33rf39tTdQMM8CxUavydyF9vca4wJGqb9UaGHLHgh35T8gffqJUuSRKO6tZOnAxEqwFTj3OQib33bRq5rbZiMSSHsV414OIllBQRQmHuDbohzYzzHIwFEdYO"
-      }
+      "program": "${workspaceRoot}/src/server/static.js",
+      "args": ["true"]
     }
   ]
 }

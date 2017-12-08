@@ -9,7 +9,7 @@ const GenericList = ({items}) =>
         key={index}
       >
         {item}
-        <hr />
+        <hr/>
       </li>
     )}
   </ul>

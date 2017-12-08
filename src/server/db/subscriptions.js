@@ -1,9 +1,9 @@
 const { getCollection, insert, aggregate, update, updateOrInsert, execQuery } = require('./helpers');
 
-const createOrUpdate = async (userID, endpoint) => {
+const createOrUpdate = async (userID, subscription) => {
   const collection = await getCollection('subscription');
   
-  await insert(collection, {userID, endpoint});
+  await updateOrInsert(collection, {userID}, {userID, subscription});
   console.log(`saved ${userID}'s endpoint`);
   // dedupe with existing subscriptions
   // save if there is no repetition

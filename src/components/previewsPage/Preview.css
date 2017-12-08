@@ -1,8 +1,13 @@
 .preview {
-  margin: 5px;
-}
-
-.preview-link {
+  padding: 5px;
+  min-height: 60px;
   text-decoration: none;
   color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.preview__title {
+  font-weight: bold;
 }
