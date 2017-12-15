@@ -49,10 +49,10 @@ const updateNotifiedSubscritions = async (userIDs, podcastID) => {
 }
 
 const getLastUpdate = async userID => {
-  const subscriptions = await getCollection('subscription');
-  const { lastUpdated } = await execQuery(subscriptions, {userID});
+  const subscriptions = await getCollection('podcastSubscription');
+  const result = await execQuery(subscriptions, {userID});
 
-  return lastUpdated;
+  return result && result[0] && result[0].podcastID;
 }
 
 module.exports = {
@@ -60,5 +60,5 @@ module.exports = {
   addPodcastSubscription,
   getUsersToNotify,
   updateNotifiedSubscritions,
-  getLastUpdate
+  getLastUpdate,
 }

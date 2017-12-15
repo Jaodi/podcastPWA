@@ -1,13 +1,30 @@
 var MongoClient = require('mongodb').MongoClient;
 
-const getCollection = name => new Promise((resolve, reject) => {
-  MongoClient.connect("mongodb://mongo:27017/podcastPWA", function(err, db) {
+let connection;
+let connecting = false;
+
+const getConnection = () => {
+  if (connecting) {
+    return Promise.reject();
+  }
+  connecting = true;
+  return new Promise ((resolve, reject) => MongoClient.connect("mongodb://mongo:27017/podcastPWA", function(err, db) {
+    connecting = false;
     if(err) {
-      reject(err);
+      reject();
     }
-    resolve(db.collection(name));
-  });
-})
+    connection = db;
+    resolve();
+  }));
+}
+
+const getCollection = name => {
+  if (connection) {
+    return connection.collection(name);
+  } else {
+    return getConnection().then(() => getCollection(name), () => getCollection(name));
+  }
+}
 
 const execQuery = (collection, query, projection) => new Promise((resolve, reject) => {
   collection.find(query, projection).toArray(function(err, items) {

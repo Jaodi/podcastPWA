@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const redirectHttps = require('express-redirect-https');
+const expressStaticGzip = require("express-static-gzip");
 
 const {apiApp} = require('./api');
 
@@ -22,7 +23,9 @@ if (!testing) {
   app.use(redirectHttps());
 }
 
-app.use(express.static(buildDir));
+app.use(expressStaticGzip(buildDir, {
+  enableBrotli: true,
+}));
 
 app.all('/podcast/*', (req, res) => {
   res.sendFile(`${buildDir}/index.html`);

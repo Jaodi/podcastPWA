@@ -9,7 +9,7 @@ const sendPush = async subscriptions =>
   Promise.all(subscriptions.map(
     subscription => webpush.sendNotification(subscription, '123').catch(logError)
   ))
-    .then(console.log)
+    .then(logError)
     .catch(logError)
 
 module.exports = { sendPush };

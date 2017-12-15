@@ -21,7 +21,6 @@ const getUpdatedEntries = differenceWith(eqBy(prop('guid')));
 const processSinglePodcast = async podcastID => {
   const { entries, rssLink } = await getPodcast(podcastID);
   const updatedPodcast = await rssParser(rssLink);
-  //TODO make something better than taking one at random
   const [ updatedEntry ] = getUpdatedEntries(updatedPodcast.entries, entries);
   if (updatedEntry) {
     updatePodcast(updatedPodcast);

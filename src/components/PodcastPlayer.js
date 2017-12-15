@@ -29,16 +29,28 @@ PodcastPlayer.PropTypes = {
 }
 
 class AudioPlayer extends React.PureComponent{
-  constructor(props){ 
-    super(props);
+  
+  constructor(...args) {
+    super(...args)
     this.state = {
       progress: 0,
-      remaining: 0
+      remaining: 0,
+      paused: true,
     }
   }
 
   clickPlaypause = () => {
-    this.audio.paused ? this.audio.play() : this.audio.pause();
+    const { paused } = this.state;
+
+    if (paused) {
+      this.audio.play();
+    } else {
+      this.audio.pause();
+    }
+    paused ? this.audio.play() : this.audio.pause();
+    this.setState({
+      paused: !paused,
+    });
   }
 
   sliderChanged = e => {
@@ -62,7 +74,8 @@ class AudioPlayer extends React.PureComponent{
 
   render = () => {
     const {src, type} = this.props;
-    const {remaining, progress} = this.state;
+    const {remaining, progress, paused} = this.state;
+    const buttonMod = paused ? 'play' : 'pause';
 
     return <div className='audio-player'>
       <audio 
@@ -74,7 +87,7 @@ class AudioPlayer extends React.PureComponent{
         <source src={src} type={type} />
       </audio>  
       <button
-        className='audio-player__playpause' 
+        className={`audio-player__${buttonMod}`}
         onClick={this.clickPlaypause}
       />
       <input

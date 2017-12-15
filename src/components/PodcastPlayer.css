@@ -8,8 +8,18 @@
   display: none;
 }
 
-.audio-player__playpause {
+.audio-player__play {
   background: url('../play.png') left center no-repeat;
+  background-size: cover;
+  width: 32px;
+  height: 30px;
+  margin-right: 3px;
+  border: 0px;
+  outline: 0;
+}
+
+.audio-player__pause {
+  background: url('../pause.png') left center no-repeat;
   background-size: cover;
   width: 32px;
   height: 30px;

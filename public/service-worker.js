@@ -61,30 +61,33 @@ const timedFetch = (timeout, request) => new Promise(resolve => {
   setTimeout(() => resolve({error: `timeout of ${timeout} exceeded`}), timeout);
 })
 
-const matchAndCache = (event, reqUrl, version = '1') => 
-caches.open(version).then(cache => cache.match(event.request).then(cachedResp => 
-  cachedResp || fetch(event.request).then(resp => {
-    cache.put(event.request, resp.clone());
-    return resp;
-  })
+const matchAndCache = (request, version = '1') => 
+caches.open(version).then(cache => cache.match(request).then(cachedResp => 
+  cachedResp || cache.match(request.url).then(cachedResp => 
+    cachedResp || fetch(request).then(resp => {
+      cache.put(request, resp.clone());
+      return resp;
+    })
+  )
 ))
 
 const executeStrategy = (strategy, event, request) => {
   const reqUrl = request.url;
   switch (strategy){
     case CACHE_FIRST:
-      return event.respondWith(matchAndCache(event, reqUrl));
-      case CACHE_FIRST_VERSIONED:
-        return event.respondWith(matchAndCache(event, reqUrl, cacheVersion));
-    case FETCH_FIRST:
-      return event.respondWith(timedFetch(500, request).then(resp => 
-        resp.error ? matchAndCache(event, reqUrl) :
+      return event.respondWith(matchAndCache(request));
+    case CACHE_FIRST_VERSIONED:
+      return event.respondWith(matchAndCache(request, cacheVersion));
+    case FETCH_FIRST: {
+      const copy = request.clone();
+      return event.respondWith(timedFetch(500, request).then(resp => {
+        return resp.error ? matchAndCache(copy) :
         caches.open('1').then(cache => {
-          cache.put(reqUrl, resp.clone());
+          cache.put(copy, resp.clone());
           return resp;
         })
-      )
-    )
+      }))
+    }
   }
 }
 
@@ -92,7 +95,9 @@ self.addEventListener('fetch', event => {
   const reqUrl = event.request.url;
   const strategy = typeStrategy[getResourceType(reqUrl)];
 
-  return executeStrategy(strategy, event, event.request);
+  return event.request.type === 'GET' 
+    ? executeStrategy(strategy, event, event.request) 
+    : fetch(event.request);
 });
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -115,19 +120,18 @@ self.addEventListener('activate', () => {
 
 self.addEventListener('push', function(event) {  
   console.log('Received a push message', event);
-  var icon = 'favicon';  
-  var tag = 'simple-push-demo-notification-tag';
+  var icon = 'favicon';
 
   event.waitUntil( 
     dbPromise.
-    then(userID => fetch(`/api/getLastEpisode?userID=${userID}`).then(res => res.json()).then(episode => {
-      console.log(episode);
-      self.registration.showNotification(`${episode.podcastTitle}`, {  
-        body: `${episode.title}`,  
+    then(userID => fetch(`/api/getLastEpisode?userID=${userID}`).then(res => res.json()).then(lastEpisode => {
+      self.registration.showNotification(`${lastEpisode.podcastTitle}`, {  
+        body: `${lastEpisode.title}`,  
         icon: icon,  
-        tag: tag  
+        tag: lastEpisode.podcastID  
       });
-      // start loading episode.enclosure.url
+      // start loading episode.enclosure.url      
+      return matchAndCache(new Request(lastEpisode.enclosure.url, {mode: 'no-cors'}));
     })   
   ));  
 });

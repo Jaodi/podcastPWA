@@ -42,14 +42,14 @@ const getLastEpisode = async podcastID => {
   try {
     const collection = await getCollection('podcast');
     const resultSet = await execQuery(collection,
-        { podcastID },
+        { id: podcastID },
         { 
           entries: { $slice: 1 },
           title: 1
         }
     );
 
-    return Object.assign(resultSet[0].entries[0], { podcastTitle: resultSet[0].title })
+    return resultSet[0] && Object.assign(resultSet[0].entries[0], { podcastTitle: resultSet[0].title }, { podcastID })
   } catch(e) {
     return `retrival failed ${e}`;
   }
